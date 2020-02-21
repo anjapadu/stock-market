@@ -5,7 +5,7 @@ import {
     Route,
     Redirect
 } from 'react-router-dom';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import {
     withRouter
 } from 'react-router-dom';
@@ -24,7 +24,7 @@ import {
     addNews,
     filterCompanies
 } from '../actions';
-import {push} from 'connected-react-router';
+import { push } from 'connected-react-router';
 import {
     Home,
     Login,
@@ -32,15 +32,15 @@ import {
     AdminDashboard,
     AdminManageGame
 } from './asyncRoutes';
-import {isLoggedSelector} from '../selectors';
-import {numberWithCommas} from '../utils';
+import { isLoggedSelector } from '../selectors';
+import { numberWithCommas } from '../utils';
 import ReactNotification from 'react-notifications-component'
 import Button from '../components/Button';
 import Axios from 'axios';
 
 class RouterApp extends React.Component {
     async componentDidMount() {
-        const {data} = await Axios.post(API_URL, {
+        const { data } = await Axios.post(API_URL, {
             query: `{
             user(uuid: "${this.props.userUUID}") {
                 uuid
@@ -168,7 +168,7 @@ class RouterApp extends React.Component {
                     to={{
                         pathname: '/',
                     }}
-                />}/>
+                />} />
 
             </Switch>
         </Layout>)
@@ -187,15 +187,28 @@ export const Layout = withRouter((props) => {
         }
     }
     if (props.isLogged && !props.admin && props.status !== 'STARTED') {
-        return <div className="pageloader is-active is-primary"><span className="title">
+        return <div className="pageloader is-active is-primary has-text-centered"><span className="title">
             {renderContent(props.status)}
-        </span></div>
+            <br />
+            <br />
+            <Button
+                onClick={props.logOff}
+                style={{
+                    color: '#fff',
+                    borderColor: '#fff',
+                    margin: 'auto'
+                }}
+                className="is-primary is-outlined"
+                text={'Salir'}
+            />
+        </span>
+        </div>
     }
     if (props.isLogged) {
         return <>
-            <ReactNotification/>
+            <ReactNotification />
             <nav id="navbar" className="navbar is-primary" role="navigation" aria-label="main navigation">
-                <div className="navbar-brand" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <div className="navbar-brand" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <a className="navbar-item" href="#">
                         <h1
                             className="has-text-weight-bold"
@@ -213,8 +226,8 @@ export const Layout = withRouter((props) => {
                                     onChange={(e) => props.filterCompanies(e.target.value)}
                                     value={props.filter}
                                 />
-                                <span className="icon is-small is-left"><i className="fas fa-search-dollar"/></span>
-                                <a className="icon is-small is-right" style={{ pointerEvents: 'auto' }} onClick={() => props.filterCompanies('')}><i className="fas fa-eraser"/></a>
+                                <span className="icon is-small is-left"><i className="fas fa-search-dollar" /></span>
+                                <a className="icon is-small is-right" style={{ pointerEvents: 'auto' }} onClick={() => props.filterCompanies('')}><i className="fas fa-eraser" /></a>
                             </div>
                             :
                             null
@@ -279,12 +292,12 @@ export const Layout = withRouter((props) => {
         </>
     }
     return (<>
-        <ReactNotification/>
+        <ReactNotification />
         {props.children}
     </>)
 })
 
-const NotLoggedOnlyRoutes = ({component: Component, ...rest}) => {
+const NotLoggedOnlyRoutes = ({ component: Component, ...rest }) => {
     return (
         <Route
             {...rest}
@@ -292,30 +305,30 @@ const NotLoggedOnlyRoutes = ({component: Component, ...rest}) => {
                 return (!rest.isLogged) ? (
                     <Component {...props} />
                 ) : (
-                    <Redirect
-                        to={{
-                            pathname: '/',
-                            state: {
-                                from: props.location
-                            }
-                        }}
-                    />
-                )
+                        <Redirect
+                            to={{
+                                pathname: '/',
+                                state: {
+                                    from: props.location
+                                }
+                            }}
+                        />
+                    )
             }
             }
         />
     )
 }
 
-const ProtectedRoute = ({component: Component, ...rest}) => {
+const ProtectedRoute = ({ component: Component, ...rest }) => {
     /**
      * It's posible to handle Roles.
      * var regex = new RegExp(rest.roles, 'g');
      * let hasScope = rest.requiredScope.match(regex) !== null;
      */
 
-        // var regex = new RegExp(rest.roles, 'g');
-        // let hasScope = rest.requiredScope.match(regex) !== null;
+    // var regex = new RegExp(rest.roles, 'g');
+    // let hasScope = rest.requiredScope.match(regex) !== null;
     let hasPerm = rest.isLogged;
     // if (hasPerm && ('isAdmin' in rest)) {
     //     hasPerm = rest.isAdmin;
@@ -326,13 +339,13 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
             render={props => {
                 return hasPerm ?
                     (<Component
-                            {...props}
-                        />
+                        {...props}
+                    />
                     ) : (
                         <Redirect
                             to={{
                                 pathname: '/login',
-                                state: {from: props.location}
+                                state: { from: props.location }
                             }}
                         />
                     )
